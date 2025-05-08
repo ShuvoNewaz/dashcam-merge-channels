@@ -1,3 +1,5 @@
 *.ts
 *.mp4
 *.txt
+__pycache__
+readme.ipynb
