@@ -40,6 +40,18 @@ def convert_fps_with_duration_change(input_file, output_file, target_fps=25):
            output_file]
     subprocess.run(cmd)
 
+def fix_fps_from_idx_list(indices_list, channels, names):
+    for indices, channel in zip(indices_list, channels):
+        for i in range(len(indices)):
+            file_name = f"{channel}/{names[channel][indices[i]]}"
+            print(f"Fixing {i + 1}/{len(indices)} video...")
+            video_fps = get_fps(file_name)
+            if video_fps < 24.5:
+                convert_fps_with_duration_change(file_name,
+                                                 names[channel][indices[i]],
+                                                 25)
+                os.system(f"mv {names[channel][indices[i]]} {file_name}")
+
 def get_video_duration(path):
     cmd = [
         "ffprobe",

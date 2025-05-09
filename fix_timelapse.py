@@ -1,11 +1,12 @@
 import os
 import argparse
-import subprocess
 from utils import *
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-i", "--indices_list", nargs='+',
-                    action="append", type=int, required=True)
+                    action="append", type=int, required=False)
+parser.add_argument("-s", "--slices_list", nargs='+',
+                    action="append", type=int, required=False)
 parser.add_argument("-c", "--channels",
                     action="append", type=str, required=True)
 parser.add_argument("-e", "--extension", type=str, default="ts")
@@ -33,12 +34,15 @@ dirs = {"Front": frontDir, "Back": backDir,
 names = {"Front": frontNames, "Back": backNames,
          "Left": leftNames, "Right": rightNames}
 
-for indices, channel in zip(args.indices_list, channels):
-    for i in range(len(indices)):
-        file_name = f"{channel}/{names[channel][indices[i]]}"
-        video_fps = get_fps(file_name)
-        if video_fps < 24.5:
-            convert_fps_with_duration_change(file_name,
-                                             names[channel][indices[i]],
-                                             25)
-            os.system(f"mv {names[channel][indices[i]]} {file_name}")
+
+# Disjoint indices
+if args.indices_list is not None:
+    fix_fps_from_idx_list(args.indices_list, channels, names)
+
+# Slice indices. Useful when too many consecutive videos are time lapsed.
+if args.slices_list is not None:
+    for slices, channel in zip(args.slices_list, channels):
+        for j in range(0, len(slices) - 1, 2):
+            indices_list = list(range(args.slices_list[j],
+                                    args.slices_list[j + 1]))
+            fix_fps_from_idx_list(indices_list, channels, names)
