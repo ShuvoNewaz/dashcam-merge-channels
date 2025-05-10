@@ -3,23 +3,27 @@
 `bash copy.sh ${yyyymmdd} ${sd_card_dir}`
 
 ## Multi-copy
+If recordings over multiple days have accumulated, copy everything as,
 
 `python multiCopy.py -d ${yyyymmdd1 yyyymmdd2...} ${sd_card_dir}`
 
 # Time Lapse
 
-The front channel records time lapse at 18 FPS, the others at 25 FPS. Change the front time lapses to 25 FPS as follows (other channels too if needed). The indices are zero-indexed.
-
-`python fix_timelapse -c Front -i ${front_time_lapse_indices} -c Back -i ${back_time_lapse_indices}...`
-
-The above script will automatically replace the 18 FPS time lapse videos with the correct ones.
+The channels don't always record time lapse in 25 FPS. Moreover, different channels sometimes record in different frame rates. The time lapses need to be the same frame rate and duration for proper synchronization.
 
 # Merge and Stack
 
 Because of time lapse frame rate and other minor issues, there may be different number of videos recorded in different channel, with front channel video count likely being higher than the rest. Use channel-specific start and end indices for that particular date.
 
-`python merge.py -d ${date} -fs ${start_video_index_front} -fe ${end_video_index_front} ... -rs ${start_video_index_right} -re ${end_video_index_right}`
+# Execution
 
-## Multi-merge
+Edit [main.sh](main.sh) as follows:
 
-`python multiMerge.py -d ${date1} -fs ${start_video_index_front1} -fe ${end_video_index_front1} ... -rs ${start_video_index_right2} -re ${end_video_index_right2} -d ${date2} -fs ${start_video_index_front2} -fe ${end_video_index_front2} ... -rs ${start_video_index_right2} -re ${end_video_index_right2}...`
+- Enter zero-indexed indices of time lapse videos of the front channel in `front_lapse_indices`.
+- Enter zero-indexed indices of time lapse videos of the other channels in `other_lapse_indices`. The other channels can also be addressed separately if needed, but the number of videos in these channels are often the same, which also preserves the indices of the time lapses.
+- Enter `date`. Format doesn't matter.
+- Enter zero-indexed start and end indices of every channel on that date in `parse_args`. For example, `-fs` is the start index of the front channel.
+
+Enter information for multiple dates in order if needed. From the root directory, enter
+
+`bash main.sh`

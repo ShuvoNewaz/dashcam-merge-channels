@@ -1,6 +1,6 @@
 import os
 import argparse
-from utils import *
+from src.utils import *
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-i", "--indices_list", nargs='+',
