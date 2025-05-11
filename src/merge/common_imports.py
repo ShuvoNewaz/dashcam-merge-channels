@@ -1,6 +1,5 @@
 import os
 import argparse
-from src.utils import *
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-d", "--date", type=str, required=True)

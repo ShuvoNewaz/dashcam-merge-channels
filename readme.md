@@ -19,8 +19,7 @@ Because of time lapse frame rate and other minor issues, there may be different 
 
 Edit [main.sh](main.sh) as follows:
 
-- Enter zero-indexed indices of time lapse videos of the front channel in `front_lapse_indices`.
-- Enter zero-indexed indices of time lapse videos of the other channels in `other_lapse_indices`. The other channels can also be addressed separately if needed, but the number of videos in these channels are often the same, which also preserves the indices of the time lapses.
+- Enter zero-indexed indices of time lapse videos of the respective channels in `${channel}_lapse_indices`.
 - Enter `date`. Format doesn't matter.
 - Enter zero-indexed start and end indices of every channel on that date in `parse_args`. For example, `-fs` is the start index of the front channel.
 
