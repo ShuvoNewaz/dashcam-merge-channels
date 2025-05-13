@@ -1,5 +1,16 @@
 import os
 import subprocess
+from src.utils.audio_utils import has_audio
+
+def get_video_names(date, channels):
+    all_names = []
+    for channel in channels:
+        channel_names = [file for file in os.listdir(channel)
+                         if date in file]
+        channel_names.sort()
+        all_names.append(channel_names)
+    
+    return all_names
 
 
 def writeText(fileList, dir, name):
@@ -32,6 +43,20 @@ def get_fps(filename):
     return float(fps_str)
 
 
+def get_time_lapse_videos(channels):
+    video_list = []
+    for channel in channels:
+        print(f"Looking for time lapses in {channel} channel...")
+        channel_videos = os.listdir(channel)
+        channel_videos.sort()
+        for video in channel_videos:
+            video_dir = os.path.join(channel, video)
+            if get_fps(video_dir) < 24 and not has_audio(video_dir):
+                video_list.append(video_dir)
+    
+    return video_list
+
+
 def convert_fps_with_duration_change(input_file, output_file, target_fps=25):
     input_fps = get_fps(input_file)
     scale_factor = input_fps / target_fps
@@ -42,6 +67,12 @@ def convert_fps_with_duration_change(input_file, output_file, target_fps=25):
            "-c:v", "libx264", "-preset", "fast", "-crf", "23", "-an",
            output_file]
     subprocess.run(cmd)
+
+def fix_fps_from_dir_list(dir_list):
+    for dir in dir_list:
+        video_name = dir.split("/")[1]
+        convert_fps_with_duration_change(dir, video_name, 25)
+        os.system(f"mv {video_name} {dir}")
 
 def fix_fps_from_idx_list(indices_list, channels, names):
     for indices, channel in zip(indices_list, channels):

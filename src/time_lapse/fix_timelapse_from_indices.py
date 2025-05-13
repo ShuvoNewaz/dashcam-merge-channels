@@ -1,7 +1,6 @@
 import os
 import argparse
 from src.utils.video_utils import *
-from src.utils.audio_utils import has_audio
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-i", "--indices_list", nargs='+',
@@ -11,10 +10,10 @@ parser.add_argument("-c", "--channels",
 args = parser.parse_args()
 
 cwd = os.getcwd()
-frontDir = os.path.join(cwd, "Front")
-backDir = os.path.join(cwd, "Back")
-leftDir = os.path.join(cwd, "Left")
-rightDir = os.path.join(cwd, "Right")
+frontDir = os.path.join(cwd, "front")
+backDir = os.path.join(cwd, "back")
+leftDir = os.path.join(cwd, "left")
+rightDir = os.path.join(cwd, "right")
 
 frontNames = os.listdir(frontDir)
 backNames = os.listdir(backDir)

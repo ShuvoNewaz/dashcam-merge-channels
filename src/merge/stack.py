@@ -1,16 +1,10 @@
-import argparse
+from src.merge.common_imports import *
 import os
 from src.utils.video_utils import *
-
-parser = argparse.ArgumentParser()
-parser.add_argument("-d", "--date", type=str, required=True)
-parser.add_argument("-ext", "--extension", type=str, default="ts")
-args = parser.parse_args()
 
 h = 720
 w = h * 16 // 9
 ext = args.extension
-channels = ["left", "right", "front", "back"]
 
 # Stack videos
 stack_videos(f"front_{args.date}.{ext}",
@@ -26,5 +20,4 @@ os.system(f"ffmpeg -y -i {args.date}_no_audio.{ext} -i {args.date}.wav \
 # Remove individual channel files
 for channel in channels:
     os.system(f"rm {f"{channel}_{args.date}.{ext}"}")
-os.system(f"rm {args.date}_no_audio.{ext}")
-os.system(f"rm {args.date}.wav")
+os.system(f"rm {args.date}_no_audio.{ext} {args.date}.wav")

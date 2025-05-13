@@ -1,10 +1,10 @@
 date="$1"
 dashCamHome="$2"
 
-front_dest="Front/"
-back_dest="Back/"
-right_dest="Right/"
-left_dest="Left/"
+front_dest="front/"
+back_dest="back/"
+right_dest="right/"
+left_dest="left/"
 
 mkdir -p "$front_dest" "$back_dest" "$right_dest" "$left_dest"
 
@@ -24,7 +24,7 @@ do
     for src_dir in "${!dir_map[@]}";
     do
         dest_dir="${dir_map[$src_dir]}"
-        find "$src_dir" -type f -name "*$date*.ts" -exec cp "{}"  "$dest_dir" \;
+        find "$src_dir" -type f -name "*$date*.ts" -exec cp -n "{}"  "$dest_dir" \;
     done
     unset dir_map
 done
