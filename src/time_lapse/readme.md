@@ -16,6 +16,14 @@ The time low frame-rate time lapses are detected by computing the frame rate of 
 
 `python -m src.time_lapse.fix_timelapse_from_indices -c Front -i ${front_lapse_indices} -c Back -i ${back_lapse_indices} -c Left -i ${left_lapse_indices} -c Right -i ${right_lapse_indices}`
 
+## Automated
+
 If the microphone was not turned off, simply enter
 
 `python -m src.time_lapse.fix_timelapse`
+
+## Midnight Crossing
+
+The way the scripts are automated, the videos with the same date tag in their file names are merged and stacked. Since different channels have different frame rates, the channel durations can go out of sync when time lapses cross midnight. This is addressed by splitting the time lapse videos at midnight as follows:
+
+`python -m src.time_lapse.midnight_split -d ${date} -sd ${sd_card_dir}`

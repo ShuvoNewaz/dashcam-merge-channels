@@ -1,5 +1,7 @@
 import os
 import subprocess
+from datetime import datetime, timedelta
+from src.utils.common_utils import get_duration
 from src.utils.audio_utils import has_audio
 
 def get_video_names(date, channels):
@@ -43,6 +45,11 @@ def get_fps(filename):
     return float(fps_str)
 
 
+def is_timelapse(video_dir):
+
+    return get_fps(video_dir) < 24 and not has_audio(video_dir)
+
+
 def get_time_lapse_videos(channels):
     video_list = []
     for channel in channels:
@@ -51,7 +58,7 @@ def get_time_lapse_videos(channels):
         channel_videos.sort()
         for video in channel_videos:
             video_dir = os.path.join(channel, video)
-            if get_fps(video_dir) < 24 and not has_audio(video_dir):
+            if is_timelapse(video_dir):
                 video_list.append(video_dir)
     
     return video_list
@@ -129,3 +136,68 @@ def stack_videos(front, back, left, right, output_file, w, h):
            "-c:v", "libx264", "-crf", "23", "-preset", "fast",
            "-an", output_file]
     subprocess.run(cmd, check=True)
+
+
+def format_time(dt):
+    return dt.strftime("%Y-%m-%d %H:%M:%S")
+
+
+def get_modification_time_from_exif(file_path):
+    result = subprocess.run(
+        ["exiftool", "-FileModifyDate", file_path],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    output = result.stdout.strip()
+    output = output.split(":")[1:6]
+    output[0] = output[0][1:]
+    output.insert(3, output[2][-2:])
+    output[2] = output[2][:2]
+    output[5] = output[5][:2]
+    
+    return f"{output[0]}-{output[1]}-{output[2]} {output[3]}:{output[4]}:{output[5]}"
+
+
+def split_at_midnight(video_path: str,
+                      sd_card_dir):
+    channel, video_name = video_path.split("/")
+    channel_abbr = {"front": "F", "back": "R",
+                    "left": "FL", "right": "FR"}
+    src_video_dir = f"{sd_card_dir}/video/{channel_abbr[channel]}/{video_name}"
+    end_time_str = get_modification_time_from_exif(src_video_dir)
+    end_time = datetime.strptime(end_time_str, "%Y-%m-%d %H:%M:%S")
+
+    duration_sec = get_duration(video_path)
+    fps = get_fps(video_path)
+    start_time = end_time - timedelta(seconds=duration_sec*fps)
+
+    # Compute next midnight
+    midnight = (start_time + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+    date2 = str(midnight.date())
+    date2 = date2.replace("-", "")
+
+    if end_time <= midnight:
+        print("Video does not cross midnight. No split needed.")
+        return None
+
+    # Compute offset in seconds from start to midnight
+    split_offset = (midnight - start_time).total_seconds() / fps
+
+    base, ext = os.path.splitext(video_path)
+    
+    out1 = video_name
+    out2 = f"{date2}_000000{channel_abbr[channel]}{ext}"
+
+    print(f"Splitting at midnight: {midnight.strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"Part 1 duration: {split_offset:.2f} seconds")
+
+    # Run ffmpeg commands
+    subprocess.run(["ffmpeg", "-y", "-i", video_path, "-t", str(split_offset), "-c", "copy", out1])
+    subprocess.run(["ffmpeg", "-y", "-ss", str(split_offset), "-i", video_path, "-c", "copy", out2])
+
+    # Move to channel directory
+    os.system(f"mv {out1} {video_path}")
+    os.system(f"mv {out2} {channel}/{out2}")
+
+    return out1, out2
