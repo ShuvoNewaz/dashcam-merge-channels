@@ -1,3 +1,4 @@
+#!/bin/bash
 date="$1"
 dashCamHome="$2"
 

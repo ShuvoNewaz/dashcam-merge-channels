@@ -1,4 +1,5 @@
 import subprocess
+import os
 
 
 def get_duration(path):
@@ -14,3 +15,12 @@ def get_duration(path):
         return float(result.stdout.strip())
     except ValueError:
         return None  # or raise an exception
+
+
+def removeFile(file):
+    try:
+        os.remove(file)
+    except FileNotFoundError:
+        print(f"{file} not found, skipping.")
+    except Exception as e:
+        print(f"Error deleting {file}: {e}")

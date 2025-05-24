@@ -1,7 +1,8 @@
 import os
 import subprocess
+import shutil
 from datetime import datetime, timedelta
-from src.utils.common_utils import get_duration
+from src.utils.common_utils import *
 from src.utils.audio_utils import has_audio
 
 def get_video_names(date, channels):
@@ -21,13 +22,13 @@ def writeText(fileList, dir, name):
         for fileName in fileList:
             fileName = os.path.join(dir, fileName)
             audio_source_list.append(fileName)
-            f.write(f"file {fileName} \n")
+            f.write(f"file \'{fileName}\'\n")
     f.close()
 
 def deleteFilesFromList(fileList, dir):
     for fileName in fileList:
         fileName = os.path.join(dir, fileName)
-        os.system(f"rm {fileName}")
+        removeFile(fileName)
 
 
 def get_fps(filename):
@@ -89,7 +90,8 @@ def fix_fps_from_dir_list(dir_list):
     for dir in dir_list:
         video_name = dir.split("/")[1]
         convert_fps_with_duration_change(dir, video_name, 25)
-        os.system(f"mv {video_name} {dir}")
+        shutil.move(video_name, dir)
+
 
 def fix_fps_from_idx_list(indices_list, channels, names):
     for indices, channel in zip(indices_list, channels):
@@ -101,17 +103,15 @@ def fix_fps_from_idx_list(indices_list, channels, names):
                 convert_fps_with_duration_change(file_name,
                                                  names[channel][indices[i]],
                                                  25)
-                os.system(f"mv {names[channel][indices[i]]} {file_name}")
+                shutil.move(names[channel][indices[i]], file_name)
 
 
 def change_duration(input_file, output_file, target_duration):
     # Get original duration
-    result = subprocess.run(
-        ['ffprobe', '-v', 'error', '-select_streams', 'v:0',
-         '-show_entries', 'format=duration',
-         '-of', 'default=noprint_wrappers=1:nokey=1', input_file],
-        stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
-    )
+    result = subprocess.run(['ffprobe', '-v', 'error', '-select_streams', 'v:0',
+                             '-show_entries', 'format=duration',
+                             '-of', 'default=noprint_wrappers=1:nokey=1', input_file],
+                             stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     try:
         original_duration = float(result.stdout.strip())
     except ValueError:
@@ -142,8 +142,7 @@ def change_duration(input_file, output_file, target_duration):
 
 def stack_videos(front, back, left, right, output_file, w, h):
     cmd = ["ffmpeg", "-y", "-fflags", "+genpts", "-avoid_negative_ts", "make_zero",
-           "-i", front, "-i", back, "-i", left, "-i", right,
-           "-filter_complex",
+           "-i", front, "-i", back, "-i", left, "-i", right, "-filter_complex",
            f"[0:v]scale={w}:{h},setpts=PTS-STARTPTS[top_left];"
            f"[1:v]scale={w}:{h},setpts=PTS-STARTPTS[top_right];"
            f"[2:v]hflip,scale={w}:{h},setpts=PTS-STARTPTS[bottom_right];"
@@ -164,12 +163,10 @@ def format_time(dt):
 
 
 def get_modification_time_from_exif(file_path):
-    result = subprocess.run(
-        ["exiftool", "-FileModifyDate", file_path],
-        capture_output=True,
-        text=True,
-        check=True
-    )
+    result = subprocess.run(["exiftool", "-FileModifyDate", file_path],
+                            capture_output=True,
+                            text=True,
+                            check=True)
     output = result.stdout.strip()
     output = output.split(":")[1:6]
     output[0] = output[0][1:]
@@ -218,7 +215,5 @@ def split_at_midnight(video_path: str,
     subprocess.run(["ffmpeg", "-y", "-ss", str(split_offset), "-i", video_path, "-c", "copy", out2])
 
     # Move to channel directory
-    os.system(f"mv {out1} {video_path}")
-    os.system(f"mv {out2} {channel}/{out2}")
-
-    return out1, out2
+    shutil.move(out1, video_path)
+    shutil.move(out2, f"{channel}/{out2}")

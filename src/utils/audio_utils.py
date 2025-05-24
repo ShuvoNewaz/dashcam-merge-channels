@@ -63,5 +63,5 @@ def build_audio_timeline(file_list, date):
                     '-ar', '48000', '-ac', '2',
                     '-acodec', 'pcm_s16le', f"{date}.wav"],
                    check=True)
-    os.system(f"rm {date}_audio.txt")
+    os.remove(f"{date}_audio.txt")
     shutil.rmtree(f"{date}_audio")

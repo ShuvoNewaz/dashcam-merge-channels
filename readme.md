@@ -44,7 +44,7 @@ In the stage where the channels are all forced to the same duration, all 4 chann
 
 ## Series Operation
 
-The video duration stage is performed one channel at a time. `{channel}_{date}_temp.ts` is deleted as soon as its corresponding `{channel}_{date}.ts` is generated. This version of the repository does not support the series operation.
+The video duration stage is performed one channel at a time. `{channel}_{date}_temp.ts` is deleted as soon as its corresponding `{channel}_{date}.ts` is generated. This version of the repository does not support the series operation. Series operation can be done in one the two following ways.
 
 ### Using Previous Commit
 
@@ -54,6 +54,6 @@ To do this stage in series, please move to a previous commit by entering
 
 right after cloning and changing directory. Follow the next steps are outlined above. Series operation saves space, but needs much more time to complete.
 
-### Staying in Current Commit
+### Staying in Current Commit (Preferred)
 
 The current contents of [this](src/merge/fix_duration.py) file can be replaced by [this](https://github.com/ShuvoNewaz/dashcam-merge-channels/blob/9a713e8ba0fb1ed29753b5df49d0054890df51a2/src/merge/fix_duration.py) file to perform series operation.
