@@ -142,19 +142,19 @@ def change_duration(input_file, output_file, target_duration):
 
 def stack_videos(front, back, left, right, output_file, w, h):
     cmd = ["ffmpeg", "-y", "-fflags", "+genpts", "-avoid_negative_ts", "make_zero",
-               "-i", front, "-i", back, "-i", left, "-i", right,
-               "-filter_complex",
-               f"[0:v]scale={w}:{h},setpts=PTS-STARTPTS[top_left];"
-               f"[1:v]scale={w}:{h},setpts=PTS-STARTPTS[top_right];"
-               f"[2:v]hflip,scale={w}:{h},setpts=PTS-STARTPTS[bottom_right];"
-               f"[3:v]hflip,scale={w}:{h},setpts=PTS-STARTPTS[bottom_left];"
-               f"[top_left][top_right]hstack=inputs=2[top];"
-               f"[bottom_left][bottom_right]hstack=inputs=2[bottom];"
-               f"[top][bottom]vstack=inputs=2[video]",
-               "-map", "[video]", "-map", "2:a?",
-               "-video_track_timescale", "12800",
-               "-c:v", "libx264", "-crf", "23", "-preset", "fast",
-               "-an", output_file]
+           "-i", front, "-i", back, "-i", left, "-i", right,
+           "-filter_complex",
+           f"[0:v]scale={w}:{h},setpts=PTS-STARTPTS[top_left];"
+           f"[1:v]scale={w}:{h},setpts=PTS-STARTPTS[top_right];"
+           f"[2:v]hflip,scale={w}:{h},setpts=PTS-STARTPTS[bottom_right];"
+           f"[3:v]hflip,scale={w}:{h},setpts=PTS-STARTPTS[bottom_left];"
+           f"[top_left][top_right]hstack=inputs=2[top];"
+           f"[bottom_left][bottom_right]hstack=inputs=2[bottom];"
+           f"[top][bottom]vstack=inputs=2[video]",
+           "-map", "[video]", "-map", "2:a?",
+           "-video_track_timescale", "12800",
+           "-c:v", "libx264", "-crf", "23", "-preset", "fast",
+           "-an", output_file]
 
     subprocess.run(cmd)
 

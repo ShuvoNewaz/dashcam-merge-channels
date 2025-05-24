@@ -14,6 +14,6 @@ do
 
     # Merge and stack
     python -m src.merge.merge_channel_videos -d ${date}
-    python -m src.merge.fix_duration.py -d ${date}
+    python -m src.merge.fix_duration -d ${date}
     python -m src.merge.stack -d ${date}
 done
