@@ -24,3 +24,8 @@ def removeFile(file):
         print(f"{file} not found, skipping.")
     except Exception as e:
         print(f"Error deleting {file}: {e}")
+
+
+def parseBool(s):
+
+    return s == "True" or s == "true"

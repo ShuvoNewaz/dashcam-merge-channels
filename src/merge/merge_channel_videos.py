@@ -2,19 +2,20 @@ from src.merge.common_imports import *
 from src.utils.audio_utils import *
 from src.utils.video_utils import *
 from src.utils.common_utils import removeFile
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 leftNames, rightNames, frontNames, backNames  = get_video_names(args.date, channels)
 
 names = {"front": frontNames, "back": backNames,
          "left": leftNames, "right": rightNames}
 
-for channel in channels:
+# Get audio
+audio_source_list = get_audio_source_list(leftNames,
+                                          os.path.join(cwd, "left"))
+audio_file_list = build_audio_timeline(audio_source_list, args.date)
+
+def mergeChannelVideos(channel):
     channel_dir = os.path.join(cwd, channel)
-    if channel == "left":
-        # Get audio
-        audio_source_list = get_audio_source_list(names[channel],
-                                                  channel_dir)
-        audio_file_list = build_audio_timeline(audio_source_list, args.date)
 
     # Cascade all videos of a single channel
     writeText(names[channel],
@@ -30,3 +31,16 @@ for channel in channels:
                         channel_dir)
     if os.path.isdir(channel_dir) and not os.listdir(channel_dir):
         os.rmdir(channel_dir)
+
+if parallel:
+    # Run all 4 channels in parallel
+    with ThreadPoolExecutor(max_workers=4) as executor:
+        futures = [executor.submit(mergeChannelVideos, channel) for channel in channels]
+        for future in as_completed(futures):
+            try:
+                future.result()
+            except Exception as e:
+                print(f"Error processing channel: {e}")
+else:
+    for channel in channels:
+        mergeChannelVideos(channel)

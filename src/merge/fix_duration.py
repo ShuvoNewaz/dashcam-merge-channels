@@ -15,11 +15,15 @@ def process_channel(channel):
     # Delete temp file
     removeFile(temp_file)
 
-# Run all 4 channels in parallel
-with ThreadPoolExecutor(max_workers=4) as executor:
-    futures = [executor.submit(process_channel, channel) for channel in channels]
-    for future in as_completed(futures):
-        try:
-            future.result()
-        except Exception as e:
-            print(f"Error processing channel: {e}")
+if parallel:
+    # Run all 4 channels in parallel
+    with ThreadPoolExecutor(max_workers=4) as executor:
+        futures = [executor.submit(process_channel, channel) for channel in channels]
+        for future in as_completed(futures):
+            try:
+                future.result()
+            except Exception as e:
+                print(f"Error processing channel: {e}")
+else:
+    for channel in channels:
+        process_channel(channel)

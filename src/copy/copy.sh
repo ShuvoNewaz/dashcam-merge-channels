@@ -1,6 +1,6 @@
 #!/bin/bash
-date="$1"
-dashCamHome="$2"
+dashCamHome="$1"
+date="$2"
 
 front_dest="front/"
 back_dest="back/"

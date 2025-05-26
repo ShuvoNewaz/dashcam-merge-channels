@@ -1,6 +1,6 @@
 # Copy from SD Card
 
-`bash src/copy/copy.sh ${yyyymmdd} ${sd_card_dir}`
+`bash src/copy/copy.sh ${sd_card_dir} ${yyyymmdd}`
 
 ## Multi-copy
 If recordings over multiple days have accumulated, copy everything as,

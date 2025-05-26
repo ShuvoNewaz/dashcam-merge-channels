@@ -4,3 +4,7 @@
 *.wav
 __pycache__
 readme.ipynb
+front
+back
+left
+right

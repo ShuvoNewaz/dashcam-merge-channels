@@ -4,7 +4,7 @@ The channels don't always record time lapse in 25 FPS. Moreover, different chann
 
 ## From Indices
 
-The time low frame-rate time lapses are detected by computing the frame rate of all the videos and checking if they have audio. If a video has a low frame rate and no audio, it will be classified as a time lapse. However, if the microphone was accidentally turned off, regular videos may also be classified as time lapse. This [file](src/time_lapse/fix_timelapse_from_indices.py) allows manual selection of indices of time lapse videos in each channel. If this is used, [main.sh](main.sh) must be modified accordingly. An example modification is shown below:
+The time low frame-rate time lapses are detected by computing the frame rate of all the videos and checking if they have audio. If a video has a low frame rate and no audio, it will be classified as a time lapse. However, if the microphone was accidentally turned off, regular videos may also be classified as time lapse. This [file](src/time_lapse/fix_timelapse_from_indices.py) allows manual selection of indices of time lapse videos in each channel. If this is used, [`main.sh`](main.sh) must be modified accordingly. An example modification is shown below:
 
 `front_lapse_indices="5 6 7 19 26 30 31 32 33 34 35 36 37 38 41 44"`
 

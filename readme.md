@@ -15,7 +15,7 @@ To use, open terminal in your preferred work directory and enter the following c
 
 # Simplified
 
-Run `bash main.sh ${sd_card_dir} ${yyyymmdd1} ${yyyymmdd2}...`
+Run `bash main.sh ${sd_card_dir} ${parallel} ${yyyymmdd1} ${yyyymmdd2}...`
 
 If you wish to understand how each component works, look for the readmes inside corresponding src directory. The sequence is:
 
@@ -38,22 +38,6 @@ Given the number of channels, the total space required during each transition st
 - In root directory after stacking. The file name is `{date}_no_audio.ts`. `{channel}_{date}.ts` are deleted.
 - In root directory after adding audio. The final file name is `{date}.ts`. `{date}_no_audio.ts` and `{date}.wav` are deleted.
 
-## Parallel Operation
+# Parallel/Series Operation
 
-In the stage where the channels are all forced to the same duration, all 4 channels are done simultaneously (in parallel). During this process, all 4 `{channel}_{date}_temp.ts` and the growing `{channel}_{date}.ts` files exist in the disk at the same time. Depending on the length of the recording on the day, the space requirement can be ridiculously high (100GB for 3 hours of video). A series operation may be preferred if disk space is a constraint.
-
-## Series Operation
-
-The video duration stage is performed one channel at a time. `{channel}_{date}_temp.ts` is deleted as soon as its corresponding `{channel}_{date}.ts` is generated. This version of the repository does not support the series operation. Series operation can be done in one the two following ways.
-
-### Using Previous Commit
-
-To do this stage in series, please move to a previous commit by entering
-
-`git checkout 9a713e8`
-
-right after cloning and changing directory. Follow the next steps are outlined above. Series operation saves space, but needs much more time to complete.
-
-### Staying in Current Commit (Preferred)
-
-The current contents of [this](src/merge/fix_duration.py) file can be replaced by [this](https://github.com/ShuvoNewaz/dashcam-merge-channels/blob/9a713e8ba0fb1ed29753b5df49d0054890df51a2/src/merge/fix_duration.py) file to perform series operation.
+Parallel operation saves time, but requires more disk space to process all the channels at once. Series operation requires more time, but can work when disk space is a constraint (long trips).
