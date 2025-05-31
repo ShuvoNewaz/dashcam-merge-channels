@@ -10,7 +10,7 @@ args = parser.parse_args()
 channels = ["front", "back", "left", "right"]
 for channel in channels:
     channel_videos = [file for file in os.listdir(channel)
-                         if args.date in file]
+                      if args.date in file]
     channel_videos.sort()
     suspect_video = os.path.join(channel, channel_videos[-1])
     
