@@ -1,6 +1,6 @@
 # Environment
 
-This project was developed in an Ubuntu 22.04 system. Tools required:
+This project was developed in an Ubuntu 22.04 system. It can be used on a Windows machine running Windows Subsystem for Linux. Tools required:
 
 - Python
 - FFMpeg
