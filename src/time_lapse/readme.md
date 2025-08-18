@@ -26,8 +26,4 @@ If the microphone was not turned off, simply enter
 
 The way the scripts are automated, the videos with the same date tag in their file names are merged and stacked. Since different channels have different frame rates, the channel durations can go out of sync when time lapses cross midnight. This is addressed by splitting the time lapse videos at midnight as follows:
 
-`python -m src.time_lapse.midnight_split -d ${date} -sd ${sd_card_dir}`
-
-### Caution
-
-The sd card must not be removed before this part is completed. Also, the midnight crossing script must not be run more than once unless the source files are copied again. This is because the file creation metadata of the original file in the sd card is used to compute how much of the time lapse has gone over to the next day. Once split, running this again will mess up the split.
+`python -m src.time_lapse.midnight_split -d ${date}`

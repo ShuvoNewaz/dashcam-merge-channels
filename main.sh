@@ -6,10 +6,10 @@ parallel="$2" # True/False
 for date in "${@:3}"; # must be yyyymmdd
 do
     # Copy from sd card
-    bash src/copy/copy.sh ${sd_card_dir} ${date}
+    python3 -m src.copy.copy -d ${date} -sd ${sd_card_dir}
 
     # Check if time lapse crosses midnight
-    python3 -m src.time_lapse.midnight_split -d ${date} -sd ${sd_card_dir}
+    python3 -m src.time_lapse.midnight_split -d ${date}
 
     # Fix time lapse videos
     python3 -m src.time_lapse.fix_timelapse   
