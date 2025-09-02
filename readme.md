@@ -41,3 +41,17 @@ Given the number of channels, the total space required during each transition st
 # Parallel/Series Operation
 
 Parallel operation saves time, but requires more disk space to process all the channels at once. Series operation requires more time, but can work when disk space is a constraint (long trips).
+
+# Delay
+
+Sometime the audio and video are still out of sync. The remedy this, a delay script is provided.
+
+## Delay Video
+
+`python3 -m src.delay -d ${date} -t video -a {amount in seconds}`
+
+## Delay Audio
+
+`python3 -m src.delay -d ${date} -t audio -a {amount in seconds}`
+
+The resulting file is saved as `output.ts`.

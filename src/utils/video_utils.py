@@ -226,3 +226,12 @@ def split_at_midnight(video_dir):
     # Move to channel directory
     shutil.move(out1, video_dir)
     shutil.move(out2, f"{channel}/{out2}")
+
+
+def delayVideo(file, amount):
+    cmd = ["ffmpeg", "-y", "-i", file,
+           "-itsoffset", amount, "-i", file,
+           "-map", "1:v", "-map", "0:a",
+           "-c", "copy", "output.ts"]
+    
+    subprocess.run(cmd)

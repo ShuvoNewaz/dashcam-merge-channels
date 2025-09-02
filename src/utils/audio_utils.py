@@ -65,3 +65,12 @@ def build_audio_timeline(file_list, date):
                    check=True)
     os.remove(f"{date}_audio.txt")
     shutil.rmtree(f"{date}_audio")
+
+
+def delayAudio(file, amount):
+    cmd = ["ffmpeg", "-y", "-i", file,
+           "-itsoffset", amount, "-i", file,
+           "-map", "0:v", "-map", "1:a",
+           "-c", "copy", "output.ts"]
+    
+    subprocess.run(cmd)
